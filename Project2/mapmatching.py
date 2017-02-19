@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import pdb; 
 import csv
+import numpy
 from math import tan, degrees
 from helper_functions import haversine
 
@@ -23,7 +25,7 @@ ID2 = [0,0,0,0]
 current = [0,0,0,0]
 i = 0
 for p_line in probe_data:
-    if i < 50:
+    if i < 59:
         i = i + 1
         continue
 
@@ -52,7 +54,10 @@ for p_line in probe_data:
             if dist < min_distance[1]:
                 min_distance = [l_line[0], dist]
 
+    #pdb.set_trace()
     current = [min_distance[0],float(p_line[3]),float(p_line[4]),float(p_line[5])]
+    print "printing current"
+    print current
     if ID1[0] == 0:
         ID1 = current
         ID2 = current
@@ -64,10 +69,15 @@ for p_line in probe_data:
                        ID1[2],
                        ID2[1],
                        ID2[2]))
+            print "printing x"
+            print x
             y = ID2[3]-ID1[3]
+            print "printing y"
+            print y
             print ('printing slope')
             try:
-                slope = degrees(tan(y/x))
+                ang_radians = float(y/x)
+                slope = numpy.rad2deg(numpy.arctan(ang_radians))  
             except:
                 slope = 0
                 pass
@@ -76,6 +86,8 @@ for p_line in probe_data:
             ID2 = current
         else:
             ID2 = current
+            print "printing ID2"
+            print ID2
 
 
 
