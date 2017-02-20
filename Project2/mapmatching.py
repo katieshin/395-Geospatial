@@ -3,7 +3,7 @@ import pdb
 import csv
 import numpy
 from math import tan, degrees
-from helper_functions import haversine
+from helper_functions import haversine, find3Ddist
 
 link_file = open("link_data.csv", "r")
 probe_file = open("probe_point_data.csv", "r")
@@ -11,7 +11,7 @@ filewrite = open("mapmatchingoutput.csv", "w")
 
 probe_data = csv.reader(probe_file, delimiter=',')
 link_data = csv.reader(link_file, delimiter=',')
-filewrite.write("linkID, x, y, ourSlope, givenSlope \n")
+filewrite.write("linkID, distance, ourSlope, givenSlope \n")
 # for each probe data line, create a p_lat_lng tuple and find the
 # link that contains a point with the minimum distance for that
 # lat_lng tuple
@@ -78,23 +78,30 @@ for p_line in probe_data:
         # compare
         if ID1[0] != current[0]:
             #calculate slope
-            x = float(haversine(ID1[1],
-                       ID1[2],
-                       ID2[1],
-                       ID2[2]))
-            # print "printing x"
-            # print x
-            y = ID2[3]-ID1[3]
-            # print "printing y"
-            # print y
-            # print ('printing slope')
-            try:
-                slope = float(y/x)
-            except:
-                slope = 0
-                pass
+            
+            [distance,slope]=find3Ddist(ID1[1],
+                                       ID1[2],
+                                       ID1[3],
+                                       ID2[1],
+                                       ID2[2],
+                                       ID2[3])
+            # x = float(haversine(ID1[1],
+            #            ID1[2],
+            #            ID2[1],
+            #            ID2[2]))
+            # # print "printing x"
+            # # print x
+            # y = ID2[3]-ID1[3]
+            # # print "printing y"
+            # # print y
+            # # print ('printing slope')
+            # try:
+            #     slope = float(y/x)
+            # except:
+            #     slope = 0
+            #     pass
             print slope
-            # filewrite.write(l_line[0]+ "," + str(x)+ "," + str(y)+ "," + str(slope)+ "," + l_line[16] + "\n")
+            filewrite.write(str(min_distance[0]) + "," + str(dist_from_refnode)+ "," + str(slope)+ "," + str(l_line[16]) + "\n")
             ID1 = current
             # ID1 = current
             # ID2 = current
