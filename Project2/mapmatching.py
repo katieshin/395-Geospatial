@@ -31,6 +31,7 @@ for p_line in probe_data:
 
     link_file.seek(0)
     p_lat_lng = [float(p_line[3]), float(p_line[4])]
+    dist_from_refnode = 0
     min_distance = [0, float("infinity")]
 
 # split each link line's 15th element, which are the reference points
@@ -38,6 +39,11 @@ for p_line in probe_data:
 
     for l_line in link_data:
         nodes = l_line[14].split("|")
+
+# ref node is the first node in the l_line index 14, so get its lat lng
+
+        refnode = [float(nodes[0].split("/")[0]),
+                   float(nodes[0].split("/")[1])]
 
 # split each links reference points string into a list of lat_lng_alt
 # strings
@@ -54,7 +60,13 @@ for p_line in probe_data:
             if dist < min_distance[1]:
                 min_distance = [l_line[0], dist]
 
-    #pdb.set_trace()
+# calculate dist_from_refnode everytime updating min_distance
+
+                dist_from_refnode =  float(haversine(p_lat_lng[0],
+                                                     p_lat_lng[1],
+                                                     refnode[0],
+                                                     refnode[1]))
+
     current = [min_distance[0],float(p_line[3]),float(p_line[4]),float(p_line[5])]
     print "printing current"
     print current
@@ -76,8 +88,7 @@ for p_line in probe_data:
             print y
             print ('printing slope')
             try:
-                ang_radians = float(y/x)
-                slope = numpy.rad2deg(numpy.arctan(ang_radians))  
+                slope = float(y/x)  
             except:
                 slope = 0
                 pass
@@ -92,7 +103,7 @@ for p_line in probe_data:
 
 
 
-    print p_lat_lng, min_distance
+    print p_lat_lng, min_distance, dist_from_refnode
 
 # for each probe data latlng, grab the latlng
 probe_data.close()
