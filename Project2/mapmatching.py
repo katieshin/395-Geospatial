@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import pdb; 
+import pdb 
 import csv
 import numpy
 from math import tan, degrees
@@ -7,10 +7,11 @@ from helper_functions import haversine
 
 link_file = open("link_data.csv", "r")
 probe_file = open("probe_point_data.csv", "r")
+filewrite = open("mapmatchingoutput.csv", "w")
 
 probe_data = csv.reader(probe_file, delimiter=',')
 link_data = csv.reader(link_file, delimiter=',')
-
+filewrite.write("linkID, x, y, ourSlope, givenSlope \n")
 # for each probe data line, create a p_lat_lng tuple and find the
 # link that contains a point with the minimum distance for that
 # lat_lng tuple
@@ -68,8 +69,8 @@ for p_line in probe_data:
                                                      refnode[1]))
 
     current = [min_distance[0],float(p_line[3]),float(p_line[4]),float(p_line[5])]
-    print "printing current"
-    print current
+    # print "printing current"
+    # print current
     if ID1[0] == 0:
         ID1 = current
         ID2 = current
@@ -81,30 +82,31 @@ for p_line in probe_data:
                        ID1[2],
                        ID2[1],
                        ID2[2]))
-            print "printing x"
-            print x
+            # print "printing x"
+            # print x
             y = ID2[3]-ID1[3]
-            print "printing y"
-            print y
-            print ('printing slope')
+            # print "printing y"
+            # print y
+            # print ('printing slope')
             try:
-                slope = float(y/x)  
+                slope = float(y/x)
             except:
                 slope = 0
                 pass
             print slope
+            # filewrite.write(l_line[0]+ "," + str(x)+ "," + str(y)+ "," + str(slope)+ "," + l_line[16] + "\n")
             ID1 = current
-            ID2 = current
+            # ID1 = current
+            # ID2 = current
         else:
             ID2 = current
-            print "printing ID2"
-            print ID2
+            # print "printing ID2"
+            # print ID2
 
 
 
 
     print p_lat_lng, min_distance, dist_from_refnode
 
-# for each probe data latlng, grab the latlng
 probe_data.close()
 link_data.close()
